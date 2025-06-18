@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Recipe</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <h1> Add New Recipe</h1>
+    <button id="themeToggle"></button>
+  </header>
+
+  <main class="form-container">
+    <form id="recipeForm">
+      <label>🍽 Title:
+        <input type="text" name="title" required />
+      </label>
+
+      <label>📸 Upload Image of Recipe with high resolution:
+        <input type="file" id="imageInput" accept="image/*" />
+      </label>
+      <img id="imagePreview" src="" alt="Preview" style="max-width: 100%; display: none; margin-top: 10px;" />
+
+      <label>🥕 Ingredients:
+        <div id="ingredientsList">
+          <input type="text" placeholder="e.g., 1 cup rice" />
+        </div>
+        <button type="button" id="addIngredient">➕ Add Ingredient</button>
+        <button type="button" id="removeIngredient">➖ Remove Last</button>
+      </label>
+
+      <label>📋 Instructions:
+        <div id="instructionsList">
+          <input type="text" placeholder="e.g., 1. Take 1 cup of rice and soak for 1 hour" />
+        </div>
+        <button type="button" id="addStep">➕ Add step</button>
+        <button type="button" id="removeStep">➖ Remove Last step</button>
+      </label>
+
+      <fieldset>
+        <legend>🍴 Meal Type:</legend>
+        <label><input type="radio" name="mealType" value="Breakfast" required /> Breakfast</label>
+        <label><input type="radio" name="mealType" value="Lunch" /> Lunch</label>
+        <label><input type="radio" name="mealType" value="Dinner" /> Dinner</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>🏷 Tags:</legend>
+        <label><input type="checkbox" name="tags" value="Vegan" /> Vegan</label>
+        <label><input type="checkbox" name="tags" value="Gluten-Free" /> Gluten-Free</label>
+        <label><input type="checkbox" name="tags" value="High Protein" /> High Protein</label>
+        <br/>
+        <label><input type="checkbox" id="customTagToggle" /> Add Custom Tag</label>
+        <input type="text" id="customTagInput" placeholder="Enter your custom tag" style="display: none; margin-top: 5px;" />
+      </fieldset>
+
+      <label>🔥 Calories (kcal):
+        <input type="number" name="calories" required />
+      </label>
+
+      <label>🧈 Fat (g):
+        <input type="number" name="fat" required />
+      </label>
+
+      <label>🍞 Carbohydrates (g):
+        <input type="number" name="carbs" required />
+      </label>
+
+      <label>🥩 Protein (g):
+        <input type="number" name="protein" required />
+      </label>
+
+      <button type="submit">💾 Save Recipe</button>
+    </form>
+  </main>
+  <a href="index.html" class="back-button">🔙 Back to Recipes</a>
+
+  <script src="data.js"></script>
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+
+    function updateThemeIcon() {
+      const isDark = document.body.classList.contains("dark-theme");
+      themeToggle.textContent = isDark ? "☀️" : "🌙";
+    }
+
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-theme");
+      localStorage.setItem("theme", document.body.classList.contains("dark-theme") ? "dark" : "light");
+      updateThemeIcon();
+    });
+
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark-theme");
+    }
+    updateThemeIcon();
+
+    const form = document.getElementById("recipeForm");
+    const ingredientsList = document.getElementById("ingredientsList");
+    const instructionsList = document.getElementById("instructionsList");
+    const customTagToggle = document.getElementById("customTagToggle");
+    const customTagInput = document.getElementById("customTagInput");
+
+    customTagToggle.addEventListener("change", () => {
+      customTagInput.style.display = customTagToggle.checked ? "inline-block" : "none";
+    });
+
+    document.getElementById("addIngredient").addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "e.g., 1 tbsp oil";
+      ingredientsList.appendChild(input);
+    });
+
+    document.getElementById("removeIngredient").addEventListener("click", () => {
+      if (ingredientsList.children.length > 1) {
+        ingredientsList.removeChild(ingredientsList.lastChild);
+      }
+    });
+
+    document.getElementById("addStep").addEventListener("click", () => {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "e.g., Mix all of them";
+      instructionsList.appendChild(input);
+    });
+
+    document.getElementById("removeStep").addEventListener("click", () => {
+      if (instructionsList.children.length > 1) {
+        instructionsList.removeChild(instructionsList.lastChild);
+      }
+    });
+
+    document.getElementById("imageInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const preview = document.getElementById("imagePreview");
+        preview.src = reader.result;
+        preview.style.display = "block";
+      };
+      if (file) reader.readAsDataURL(file);
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const ingredients = Array.from(ingredientsList.querySelectorAll("input")).map(i => i.value);
+      const instructions = Array.from(instructionsList.querySelectorAll("input")).map(i => i.value);
+      const mealType = form.querySelector("input[name='mealType']:checked")?.value;
+
+      let tags = Array.from(form.querySelectorAll("input[name='tags']:checked")).map(i => i.value);
+      if (customTagToggle.checked && customTagInput.value.trim() !== "") {
+        tags.push(customTagInput.value.trim());
+      }
+
+      const recipe = {
+  id: Date.now(),
+  createdBy: localStorage.getItem("currentUser"),
+  title: data.get("title"),
+  imageUrl: document.getElementById("imagePreview").src,
+  ingredients,
+  instructions,
+  mealType,
+  tags,
+  nutrition: {
+    calories: data.get("calories"),
+    fat: data.get("fat"),
+    carbs: data.get("carbs"),
+    protein: data.get("protein")
+  }
+};
+
+
+
+      saveRecipe(recipe);
+      alert("✅ Recipe saved!");
+      form.reset();
+      window.location.href = "index.html";
+      document.getElementById("imagePreview").style.display = "none";
+      customTagInput.style.display = "none"; // Hide again after submit
+
+    });
+  </script>
+</body>
+</html>

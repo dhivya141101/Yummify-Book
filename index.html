@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recipes World</title>
+  <link rel="stylesheet" href="recipe.css" />
+  <style>
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .search-wrapper {
+      position: relative;
+      width: 50%;
+    }
+
+    #searchInput {
+      width: 80%;
+      padding: 10px 40px 10px 15px;
+      border-radius: 25px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    .search-icon::after {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+    }
+
+    .recipe-card {
+      position: relative;
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      background-color: #fff;
+      width: 380px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .recipe-card img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+
+   
+    body.dark-theme .recipe-card {
+      background-color: #1e1e1e;
+      color: #eee;
+      border: 1px solid #444;
+    }
+
+    body.dark-theme .delete-icon {
+      color: #ff6b6b;
+    }
+
+    .logo{
+        width: 50px;
+        height: 50px;
+        border-radius: 50px;
+    }
+    h1{
+        font-family: 'Lobster', cursive;
+    }
+    .addbtn {
+    padding: 10px 20px;
+    background-color: #ff7043;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    margin-left: 10px;
+    }
+
+    .addbtn:hover {
+    background-color:  #e64a19;
+    transform: scale(1.05);
+    }
+
+    .addbtn:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 6px rgba(255, 107, 107, 0.4);
+    }
+
+    .delbtn {
+    padding: 10px 20px;
+    background-color: #ff7043;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    margin-left: 10px;
+    }
+
+    .delbtn:hover {
+    background-color:  #e64a19;
+    transform: scale(1.05);
+    }
+
+    .delbtn:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 6px rgba(255, 107, 107, 0.4);
+    }
+
+
+  </style>
+</head>
+<body>
+  <header class="header">
+    <img src="images/logo.jpg" class="logo" alt="logo"/>
+    <h1>Yummify Book</h1>
+    <button type = "button" id="themeToggle"></button>
+  </header>
+
+  <!-- 🔍 Search Bar -->
+  <div class="search-bar">
+    <div class="search-wrapper">
+      <input type="text" id="searchInput" placeholder="Search by recipe name..." />
+    </div>
+    <div class="add">
+        <button class="addbtn" id = "addbtn">Add New Recipe</button>
+    </div>
+    <button class="delbtn" onclick="deleteLastRecipe()">Delete My Recipe</button>
+  </div>
+  
+
+  <main class="recipes-container" id="recipesList"></main>
+  
+
+  <script src="data.js"></script>
+  <script>
+    const container = document.getElementById("recipesList");
+    const searchInput = document.getElementById("searchInput");
+    const themeToggle = document.getElementById("themeToggle");
+    const addbtn = document.getElementById("addbtn");
+
+    const currentUser = "user123";
+    localStorage.setItem("currentUser", currentUser);
+
+    let recipes = getAllRecipes();
+
+    function displayRecipes(list) {
+      if (list.length === 0) {
+        container.innerHTML = "<p>😢 No recipes found.</p>";
+        return;
+      }
+
+      container.innerHTML = list.map(recipe => {
+        return `
+          <div class="recipe-card" data-id="${recipe.id}">
+            <h3>${recipe.title}</h3>
+            <img src="${recipe.imageUrl}" alt="${recipe.title}" class="recipe-image"/>
+            <a href="detailed-recipe.html?id=${recipe.id}">View Details</a>
+          </div>
+        `;
+      }).join('');
+    }
+
+    searchInput.addEventListener("input", () => {
+      const keyword = searchInput.value.toLowerCase().trim();
+      const filtered = recipes.filter(recipe => recipe.title.toLowerCase().includes(keyword));
+      displayRecipes(filtered);
+    });
+
+    addbtn.addEventListener("click", () => {
+      window.location.href = "add-recipe.html";
+    });
+
+    // 🌙 Theme toggle
+    function updateThemeIcon() {
+      const isDark = document.body.classList.contains("dark-theme");
+      themeToggle.textContent = isDark ? "☀️" : "🌙";
+    }
+
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-theme");
+      localStorage.setItem("theme", document.body.classList.contains("dark-theme") ? "dark" : "light");
+      updateThemeIcon();
+    });
+
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark-theme");
+    }
+
+    updateThemeIcon();
+    displayRecipes(recipes);
+  </script>
+</body>
+</html>

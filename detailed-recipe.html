@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Full Recipe View</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    :root {
+      --primary-color: #FF6F61;
+      --secondary-color: rgba(255, 255, 255, 0.2);
+      --accent-color: #FFD700;
+      --bg-color: #fdfdfd;
+      --dark-bg: #0f0f0f;
+      --text-color: #1e1e1e;
+      --shadow-xl: 0 12px 30px rgba(0, 0, 0, 0.15);
+      --border-radius: 20px;
+      --glass-bg: rgba(255, 255, 255, 0.15);
+      --glass-blur: blur(16px);
+    }
+
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.7;
+      padding-bottom: 4rem;
+      overflow-x: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #FF6F61, #FF9A8B);
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      box-shadow: var(--shadow-xl);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    #themeToggle {
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: white;
+      transition: transform 0.3s;
+    }
+
+    #themeToggle:hover {
+      transform: scale(1.2);
+    }
+
+    .detailed-container {
+      max-width: 1000px;
+      margin: 4rem auto;
+      background: var(--glass-bg);
+      padding: 3rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      backdrop-filter: var(--glass-blur);
+      animation: slideUp 1.5s ease;
+    }
+
+    .detailed-container h2 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+      text-shadow: 0 2px 10px rgba(255, 111, 97, 0.3);
+    }
+
+    .detailed-container img {
+      width: 100%;
+      max-height: 480px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      transform: translateY(0);
+      transition: transform 0.5s ease;
+    }
+
+    .detailed-container img:hover {
+      transform: translateY(-10px) scale(1.02);
+    }
+
+    .tag {
+      display: inline-block;
+      background-color: var(--accent-color);
+      color: #000;
+      font-weight: 600;
+      padding: 8px 14px;
+      margin: 8px 8px 0 0;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
+    }
+
+    h3 {
+      margin-top: 2rem;
+      font-size: 1.6rem;
+      color: #333;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 6px;
+    }
+
+    ul, ol {
+      margin-top: 1rem;
+      padding-left: 2rem;
+      font-size: 1rem;
+    }
+
+    .nutrition-grid {
+      margin-top: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1rem;
+      background: rgba(255, 244, 220, 0.4);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 3rem;
+      background: var(--primary-color);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(255, 111, 97, 0.4);
+    }
+
+    .back-button:hover {
+      background: #e4574e;
+      transform: translateY(-3px);
+    }
+
+    /* 🔥 Dark Mode */
+    body.dark-theme {
+      background-color: var(--dark-bg);
+      color: #f0f0f0;
+    }
+
+    body.dark-theme .detailed-container {
+      background: rgba(40, 40, 40, 0.5);
+      color: #fefefe;
+    }
+
+    body.dark-theme .nutrition-grid {
+      background: rgba(80, 80, 80, 0.5);
+      color: #ffeaa7;
+    }
+
+    body.dark-theme .tag {
+      background-color: #ffa502;
+      color: #000;
+    }
+
+    body.dark-theme .back-button {
+      background-color: #ffa07a;
+      color: black;
+    }
+
+    body.dark-theme h3 {
+      color: #fff;
+    }
+
+    @keyframes slideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>📖 Recipe Details</h1>
+    <button id="themeToggle"></button>
+  </header>
+
+  <main id="fullRecipe" class="detailed-container"></main>
+
+  <script src="data.js"></script>
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+  
+    // 🔁 Toggle theme and emoji
+    function updateThemeIcon() {
+      const isDark = document.body.classList.contains("dark-theme");
+      themeToggle.textContent = isDark ? "☀️" : "🌙";
+    }
+  
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-theme");
+      localStorage.setItem("theme", document.body.classList.contains("dark-theme") ? "dark" : "light");
+      updateThemeIcon();
+    });
+  
+    // 🌓 On Load
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark-theme");
+    }
+    updateThemeIcon();
+  
+    const params = new URLSearchParams(window.location.search);
+    const recipeId = parseInt(params.get('id'));
+    const container = document.getElementById('fullRecipe');
+    const recipes = getAllRecipes();
+    const recipe = recipes.find(r => r.id === recipeId);
+
+    if (!recipe) {
+      container.innerHTML = "<p>❌ Recipe not found.</p>";
+    } else {
+      container.innerHTML = `
+        <h2>${recipe.title}</h2>
+        <img src="${recipe.imageUrl}" alt="${recipe.title}" />
+        <p>${recipe.description || ""}</p>
+
+        <h3>🌿 Tags:</h3>
+        ${recipe.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')}
+
+        <h3>🍽️ Ingredients:</h3>
+        <ul>${recipe.ingredients.map(item => `<li>${item}</li>`).join('')}</ul>
+
+        <h3>📖 Instructions:</h3>
+        <ol>${recipe.instructions.map(step => `<li>${step}</li>`).join('')}</ol>
+
+        <h3>📊 Nutrition Info:</h3>
+        <div class="nutrition-grid">
+  <div><strong>🔥 Calories:</strong><br>${recipe.nutrition?.calories || ""}</div>
+  <div><strong>🧈 Fat:</strong><br>${recipe.nutrition?.fat || ""}</div>
+  <div><strong>🍞 Carbs:</strong><br>${recipe.nutrition?.carbs || ""}</div>
+  <div><strong>🥩 Protein:</strong><br>${recipe.nutrition?.protein || ""}</div>
+</div>
+
+
+        <a class="back-button" href="index.html">🔙 Back to Recipes</a>
+      `;
+    }
+
+
+
+  
+    
+  </script>
+</body>
+</html>
