@@ -30,12 +30,19 @@ git clone https://github.com/dhivya141101/Yummify-Book.git
 
 Yummify-Book/
 ├── index.html           # Homepage
+
 ├── add-recipe.html      # Page to add recipes
+
 ├── detailed-recipe.html # Detailed recipe view
+
 ├── styles.css           # General styles
+
 ├── recipe.css           # Recipe-specific styles
+
 ├── script.js            # JavaScript logic
+
 ├── data.js              # Sample recipes data
+
 └── images/              # Recipe and logo images
 
 🧑‍💻 Author
