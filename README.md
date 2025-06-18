@@ -29,6 +29,7 @@ git clone https://github.com/dhivya141101/Yummify-Book.git
 📂 Project Structure
 
 Yummify-Book/
+
 ├── index.html           # Homepage
 
 ├── add-recipe.html      # Page to add recipes
